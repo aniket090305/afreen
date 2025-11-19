@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Surprise — Our Memories</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#ffd6e8;--card:#ff99c8;--accent:#ff4f88;--muted:#4a0033}
+*{box-sizing:border-box}body{margin:0;font-family:Montserrat,Arial;background:var(--bg);color:var(--muted);overflow-x:hidden}
+.container{max-width:1100px;margin:28px auto;padding:18px}
+.header{display:flex;align-items:center;justify-content:space-between}
+.header h2{font-family:'Dancing Script';font-size:28px;margin:0;color:#7a003f}
+.backBtn{background:var(--accent);color:#fff;padding:8px 12px;border-radius:10px;border:0;cursor:pointer}
+
+/* Floating hearts */
+@keyframes floatHearts{0%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-120vh) scale(1.8);opacity:0}}
+.hearts-container span{position:fixed;bottom:-20px;font-size:18px;animation:floatHearts 6s linear infinite;color:#ff4f88;left:calc(2% + (96% * var(--i)))}
+
+.page{display:none;min-height:100vh;padding:20px}
+.page.active{display:block;animation:fade .6s ease}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.center{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.btn{background:var(--accent);border:none;padding:12px 18px;border-radius:10px;font-weight:700;color:white;cursor:pointer;transition:.2s}
+.btn.ghost{background:transparent;border:1px solid rgba(0,0,0,0.06);color:var(--muted)}
+.btn:hover{transform:scale(1.05);box-shadow:0 0 12px #ff4f88aa}
+
+/* Popup */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:2000}
+.modal{background:var(--card);padding:28px;border-radius:14px;text-align:center;width:90%;max-width:420px;box-shadow:0 10px 30px rgba(0,0,0,0.3)}
+.modal h2{margin:0 0 10px 0;font-family:'Dancing Script'}
+
+/* Page 1 */
+.welcome-card{background:var(--card);padding:28px;border-radius:14px;width:90%;max-width:520px;text-align:center;box-shadow:0 8px 18px #ff99c880}
+
+/* Page 2 - cake */
+.cake-area{display:flex;flex-direction:column;align-items:center;gap:20px;width:100%;}
+.cake{width:320px;height:320px;background:url('cake.png') center/contain no-repeat;animation:fade .8s ease}
+.knife{width:140px;height:140px;background:url('knife.png') center/contain no-repeat;transition:0.4s}
+
+/* Page 3 - final message */
+.card-wrap{max-width:820px;margin:40px auto;background:var(--card);padding:24px;border-radius:14px;text-align:center;box-shadow:0 10px 25px #ff99c880}
+.big-message{font-size:32px;font-family:"Dancing Script";font-weight:700;margin-bottom:20px;color:#7a003f}
+.photo-card{background:#ffd1e6;border-radius:12px;overflow:hidden;position:relative;box-shadow:0 6px 20px #ff8bbb90}
+.photo-card .photo{height:420px;width:100%;object-fit:cover;background-size:cover;background-position:center;animation:zoomIn 1.3s ease}
+@keyframes zoomIn{from{transform:scale(1.15);opacity:0}to{transform:scale(1);opacity:1}}
+.photo-card .message{padding:18px;font-size:17px;color:#520028}
+.photo-card::after{content:"";position:absolute;inset:0;border:3px solid #ff4f88;border-radius:12px;animation:heartbeat 1.8s infinite ease-in-out}
+@keyframes heartbeat{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
+
+/* Falling petals */
+.petal{position:fixed;top:-20px;width:20px;height:20px;background:url('https://i.imgur.com/1J8ZQ9E.png') center/contain no-repeat;animation:fallPetals 6s linear infinite}
+@keyframes fallPetals{0%{transform:translateY(0) rotate(0)}100%{transform:translateY(110vh) rotate(360deg)}}
+
+/* Love note popup */
+.note-box{background:white;color:#520028;padding:20px;border-radius:14px;max-width:420px;margin:20px auto;display:none;box-shadow:0 6px 20px #0002}
+
+/* Click kiss */
+.kiss{position:fixed;font-size:24px;color:#ff4f88;animation:kissPop 1s ease forwards}
+@keyframes kissPop{0%{opacity:0;transform:scale(0.1)}50%{opacity:1;transform:scale(1.3)}100%{opacity:0;transform:scale(0.4)}}
+
+/* Page 4 - gallery grid */
+.container{max-width:1100px;margin:28px auto;padding:18px}
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:18px}
+.card{background:#fff0f6;border-radius:14px;padding:12px;box-shadow:0 6px 18px rgba(0,0,0,0.06);overflow:hidden;display:flex;flex-direction:column}
+.card img{width:100%;height:220px;object-fit:cover;border-radius:10px}
+.card p{margin:12px 0 0 0;color:#7a003f;font-size:15px;text-align:center}
+.featured{grid-column:1/-1;background:#fff0f6;border-radius:14px;padding:12px;box-shadow:0 8px 22px rgba(0,0,0,0.06)}
+.featured img{width:100%;height:360px;object-fit:cover;border-radius:10px}
+.featured p{margin:10px 0 0 0;text-align:center;color:#7a003f;font-size:16px}
+
+@media (max-width:980px){.gallery-grid{grid-template-columns:repeat(2,1fr)}.card img{height:180px}.featured img{height:260px}}
+@media (max-width:600px){.gallery-grid{grid-template-columns:1fr}.card img{height:220px}}
+
+/* Lightbox modal */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;z-index:3000}
+.lightbox .inner{max-width:900px;width:94%;background:transparent;border-radius:12px}
+.lightbox img{width:100%;height:auto;border-radius:12px;display:block}
+.lightbox .caption{background:rgba(255,255,255,0.95);padding:12px;border-radius:8px;margin-top:8px;color:var(--muted);text-align:center}
+.lightbox .close{position:absolute;right:18px;top:18px;background:var(--accent);color:#fff;border:0;padding:8px 10px;border-radius:8px;cursor:pointer}
+</style>
+</head>
+<body>
+
+<!-- Floating Hearts -->
+<div class="hearts-container">
+  <span style="--i:0">💖</span><span style="--i:1">💗</span><span style="--i:2">💕</span><span style="--i:3">💞</span><span style="--i:4">💘</span><span style="--i:5">💓</span>
+</div>
+
+<!-- Falling Petals (created dynamically below) -->
+
+<!-- POPUP -->
+<div id="startOverlay" class="overlay">
+  <div class="modal">
+    <h2>I have something waiting for you 🎁</h2>
+    <p>Click the button below to open your surprise.</p>
+    <button id="openBtn" class="btn">Open</button>
+  </div>
+</div>
+
+<!-- PAGE 1 -->
+<section id="page1" class="page active">
+  <div class="center">
+    <div class="welcome-card">
+      <h1 style="font-family:'Dancing Script';font-size:38px">Hello Cutie ❤️</h1>
+      <p>Are you ready for your surprise?</p>
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:12px">
+        <button class="btn" id="toPage2">Continue</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PAGE 2 - cake -->
+<section id="page2" class="page">
+  <div class="center">
+    <div class="cake-area">
+      <div class="cake" id="cake"></div>
+      <div class="knife" id="knife"></div>
+      <button class="btn" id="cutBtn">Cut the Cake 🍰</button>
+    </div>
+  </div>
+</section>
+
+<!-- PAGE 3 - final message -->
+<section id="page3" class="page">
+  <div class="card-wrap">
+    <div class="big-message" id="typedMsg"> </div>
+    <div class="photo-card">
+      <div class="message">My love, you deserve the happiest day. I made this little surprise so you know how special you are to me. — <em>[Boyfriend]</em></div>
+      <div class="photo" id="finalPhoto" style="background-image:url('img1.jpg')"></div>
+    </div>
+
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:16px">
+      <button class="btn" id="noteBtn">Open Love Note 💌</button>
+      <button class="btn" id="hugBtn">Virtual Hug 🤗</button>
+      <button class="btn" id="galleryBtn">See Our Photos 📸</button>
+    </div>
+
+    <div id="noteBox" class="note-box">You are the most beautiful part of my life. Thank you for existing, Afreen. ❤️</div>
+  </div>
+</section>
+
+<!-- PAGE 4 - gallery -->
+<section id="page4" class="page">
+  <div class="container">
+    <div class="header">
+      <h2>Our Memories</h2>
+      <button class="backBtn" id="backTo3">Back</button>
+    </div>
+
+    <div class="gallery-grid" id="galleryGrid">
+      <div class="card">
+        <img src="img1.jpg" alt="img1" data-caption="You look cutest here 💗">
+        <p>You look cutest here 💗</p>
+      </div>
+
+      <div class="card">
+        <img src="img2.jpg" alt="img2" data-caption="Your smile lights everything ✨">
+        <p>Your smile lights everything ✨</p>
+      </div>
+
+      <div class="card">
+        <img src="img3.jpg" alt="img3" data-caption="That spontaneous trip — unforgettable 💕">
+        <p>That spontaneous trip — unforgettable 💕</p>
+      </div>
+
+      <div class="featured">
+        <img src="img4.jpg" alt="img4" data-caption="My favorite memory — you and me" id="featuredImg">
+        <p>My favorite memory — you and me</p>
+      </div>
+
+      <div class="card">
+        <img src="img5.jpg" alt="img5" data-caption="Sweet moments — forever 💞">
+        <p>Sweet moments — forever 💞</p>
+      </div>
+
+      <div class="card">
+        <img src="img6.jpg" alt="img6" data-caption="Just… wow. You’re perfect 💘">
+        <p>Just… wow. You’re perfect 💘</p>
+      </div>
+
+      <div class="card">
+        <img src="img7.jpg" alt="img7" data-caption="Candid and beautiful — love this one 💓">
+        <p>Candid and beautiful — love this one 💓</p>
+      </div>
+    </div>
+
+    <div class="note">Tip: click any image to view it larger. Captions are below each photo — feel free to change them.</div>
+  </div>
+</section>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox">
+  <button class="close" id="closeLight">Close</button>
+  <div class="inner">
+    <img id="lightImg" src="" alt="large">
+    <div class="caption" id="lightCaption"></div>
+  </div>
+</div>
+
+<script>
+// create petals dynamically
+for(let i=0;i<8;i++){let p=document.createElement('div');p.className='petal';p.style.left=Math.random()*100+'vw';p.style.animationDelay=Math.random()*4+'s';document.body.appendChild(p);} 
+
+const page1=document.getElementById('page1');
+const page2=document.getElementById('page2');
+const page3=document.getElementById('page3');
+const page4=document.getElementById('page4');
+function show(n){[page1,page2,page3,page4].forEach(p=>p.classList.remove('active'));document.getElementById('page'+n).classList.add('active');}
+
+// initial buttons
+document.getElementById('openBtn').onclick=()=>{document.getElementById('startOverlay').style.display='none';show(1);};
+document.getElementById('toPage2').onclick=()=>show(2);
+
+// cake cutting
+document.getElementById('cutBtn').onclick=()=>{document.getElementById('knife').style.transform='rotate(-45deg) translateY(-25px)';setTimeout(()=>{show(3);typeWriter("Happy Birthday, Afreen ❤️");},1200);} ;
+
+// typewriter
+function typeWriter(text){let i=0;const el=document.getElementById('typedMsg');el.innerHTML="";let interval=setInterval(()=>{el.innerHTML=text.slice(0,i++);if(i>text.length) clearInterval(interval);},70);} 
+
+// love note toggle
+document.getElementById('noteBtn').onclick=()=>{let box=document.getElementById('noteBox');box.style.display=box.style.display=='block'?'none':'block';};
+
+// hug animation
+document.getElementById('hugBtn').onclick=()=>{let h=document.createElement('div');h.textContent='🤗🤗';h.style.position='fixed';h.style.left='50%';h.style.top='50%';h.style.transform='translate(-50%, -50%) scale(1)';h.style.fontSize='60px';h.style.zIndex='3000';h.style.opacity='1';h.style.transition='all 1.2s ease';document.body.appendChild(h);setTimeout(()=>{h.style.opacity='0';h.style.transform='translate(-50%, -50%) scale(1.6)';},200);setTimeout(()=>h.remove(),1400);};
+
+// kiss on click
+document.addEventListener('click',e=>{let k=document.createElement('div');k.className='kiss';k.textContent='💋';k.style.left=e.pageX+'px';k.style.top=e.pageY+'px';document.body.appendChild(k);setTimeout(()=>k.remove(),1000);});
+
+// gallery navigation
+document.getElementById('galleryBtn').onclick=()=>show(4);
+document.getElementById('backTo3').onclick=()=>show(3);
+
+// lightbox
+const gallery = document.getElementById('galleryGrid');
+const lightbox = document.getElementById('lightbox');
+const lightImg = document.getElementById('lightImg');
+const lightCaption = document.getElementById('lightCaption');
+
+gallery.addEventListener('click', (e)=>{const img = e.target.closest('img');if(!img) return;lightImg.src = img.src;lightCaption.textContent = img.dataset.caption || img.alt || '';lightbox.style.display = 'flex';});
+
+document.getElementById('closeLight').addEventListener('click', ()=>{ lightbox.style.display='none'; lightImg.src=''; });
+
+// make sure all images use object-fit cover
+document.querySelectorAll('.card img, .featured img, .photo-card .photo').forEach(i=>{ i.style.objectFit='cover'; i.style.width='100%'; });
+
+</script>
+</body>
+</html>
